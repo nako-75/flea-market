@@ -33,15 +33,18 @@
 
         <div class="item__list">
             @forelse ($items as $item)
-                <div class="item__image">
+                <a href="{{ route('item.show', ['item_id' => $item->id]) }}" class="item__link">
                     <div class="item__image">
                         <img src="{{ $item->img_url ? asset('storage/' . $item->img_url) : asset('images/no-image.png') }}" alt="{{ $item->name }}">
+                        @if($item->purchase)
+                            <span class="item__sold-badge">Sold</span>
+                        @endif
                     </div>
                     <p class="item__name">{{ $item->name }}</p>
-                </div>
+                </a>
             @empty
                 <p class="empty-message">
-                    {{ request('tab') == 'bought' ? '購入した商品はまだありません。' : '出品した商品はまだありません。' }}
+                    {{ $page == 'buy' ? '購入した商品はまだありません。' : '出品した商品はまだありません。' }}
                 </p>
             @endforelse
         </div>

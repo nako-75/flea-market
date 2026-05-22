@@ -221,3 +221,20 @@
     padding: 10px 15px;
     border-radius: 8px;
 }
+
+.btn-purchase-confirm.is-sold {
+    display: block;
+    width: 100%;
+    max-width: 600px;
+    margin: 0 0 5px 0;
+    background-color: #D9D9D9;
+    padding: 12px 0;
+    text-align: center;
+    text-decoration: none;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    color: #fff;
+    cursor: not-allowed;
+    box-sizing: border-box;
+}

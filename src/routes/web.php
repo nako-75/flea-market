@@ -26,14 +26,6 @@ Route::get('/item/{item_id}', [ItemController::class, 'show'])->name('item.show'
 
 // ログイン
 Route::middleware(['auth', 'verified', CheckProfileSetup::class])->group(function () {
-    Route::get('/', function () {
-        $user = Auth::user();
-        if (empty($user->name) || empty($user->profile_image) || empty($user->postcode)) {
-            return redirect()->route('profile.edit');
-        }
-        return app(ItemController::class)->index(request());
-        });
-
     Route::get('/mypage/profile', function(){
             return view('mypage.profile', ['user' => Auth::user()]);
         })->name('profile.edit');

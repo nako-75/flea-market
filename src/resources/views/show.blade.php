@@ -42,7 +42,15 @@
                 </div>
             </div>
 
-            <a href="/item/{{ $item->id }}/purchase" class="btn-purchase-confirm">購入手続きへ</a>
+            @if($item->purchase)
+                <button class="btn-purchase-confirm is-sold" disabled>
+                    売り切れました
+                </button>
+            @else
+                <a href="/item/{{ $item->id }}/purchase" class="btn-purchase-confirm">
+                    購入手続きへ
+                </a>
+            @endif
 
             <div class="section-box">
                 <h2 class="section-title">商品説明</h2>

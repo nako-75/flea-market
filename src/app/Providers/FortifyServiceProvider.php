@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use Laravel\Fortify\Fortify;
+use App\Http\Requests\LoginRequest;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
@@ -11,7 +16,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
-use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Contracts\RegisterResponse;
 use Illuminate\Support\Facades\Auth;
@@ -66,6 +70,21 @@ class FortifyServiceProvider extends ServiceProvider
 
                 return redirect('/');
             }
+        });
+
+        Fortify::authenticateUsing(function ($request) {
+            $loginRequest = new LoginRequest();
+            $request->validate($loginRequest->rules(), $loginRequest->messages());
+
+            $user = User::where('email', $request->email)->first();
+
+            if ($user && Hash::check($request->password, $user->password)) {
+                return $user;
+            }
+
+            throw ValidationException::withMessages([
+                'email' => ['ログイン情報が登録されていません'],
+            ]);
         });
     }
 }

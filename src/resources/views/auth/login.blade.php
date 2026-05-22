@@ -14,7 +14,7 @@
 
 
     <div class="auth-form__inner">
-        <form class="form" action="/login" method="post">
+        <form class="form" action="/login" method="post" novalidate>
             @csrf
 
     {{-- アドレス --}}

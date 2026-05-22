@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Item;
 use App\Models\Category;
+use App\Models\Purchase;
 use Illuminate\Support\Facades\Auth;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
@@ -12,13 +13,41 @@ use Stripe\Checkout\Session;
 class ItemController extends Controller
 {
     public function index(Request $request){
-        $tab = $request->query('tab', 'all');
-        $items = Item::all();
-        $my_items = [];
-        if (Auth::check()){
-            $my_items = Auth::user()->likedItems;
+
+        if (Auth::check()) {
+            $user = Auth::user();
+            if (empty($user->name) || empty($user->profile_image) || empty($user->postcode)) {
+                    $previousUrl = url()->previous();
+                    if (str_contains($previousUrl, 'login')) {
+                    } else {
+                        return redirect('/mypage/profile');
+                }
+            }
         }
-        return view('index', compact('items', 'my_items','tab'));
+
+        $tab = $request->query('tab', 'all');
+        $keyword = $request->query('keyword');
+        $itemQuery = Item::query();
+        if (Auth::check()) {
+            $itemQuery->where('user_id', '!=', Auth::id());
+        }
+        if (!empty($keyword)){
+            $itemQuery->where('name','LIKE',"%{$keyword}%");
+        }
+
+        $items = $itemQuery->get();
+        $my_items = [];
+
+        if (Auth::check()){
+            $my_itemQuery = Auth::user()->likedItems();
+
+            if (!empty($keyword)){
+                $my_itemQuery->where('name','LIKE',"%{$keyword}%");
+            }
+
+            $my_items = $my_itemQuery->get();
+        }
+        return view('index', compact('items', 'my_items','tab','keyword'));
     }
 
     public function create(){
@@ -87,7 +116,7 @@ class ItemController extends Controller
             ]],
             'mode' => 'payment',
 
-            'success_url' => route('checkout.success',['item_id' => $item_id]) . '&session_id={CHECKOUT_SESSION_ID}',
+            'success_url' => route('checkout.success',['item_id' => $item_id]) . '?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url' => route('checkout.cancel', ['item_id' => $item_id]),
             'metadata' => [
                 'user_id' => $user->id,
@@ -99,5 +128,14 @@ class ItemController extends Controller
         ]);
 
         return redirect($session->url, 303);
+    }
+
+    public function success(Request $request, $item_id) {
+        Purchase::create([
+            'user_id' => Auth::id(),
+            'item_id' => $item_id,
+        ]);
+
+        return redirect('/')->with('message','商品を購入しました！');
     }
 }

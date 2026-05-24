@@ -20,7 +20,7 @@
             @forelse($my_items as $item)
                 <a href="{{ route('item.show', ['item_id' => $item->id]) }}" class="item__link">
                     <div class="item__image">
-                        <img src="{{ asset('storage/' . $item->img_url) }}">
+                        <img src="{{ asset('storage/' . $item->img_url) }}" alt="{{ $item->name }}">
                         @if($item->purchase)
                             <span class="item__sold-badge">Sold</span>
                         @endif

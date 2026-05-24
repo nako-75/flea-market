@@ -6,6 +6,7 @@ use Laravel\Fortify\Fortify;
 use App\Http\Requests\LoginRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
@@ -74,7 +75,16 @@ class FortifyServiceProvider extends ServiceProvider
 
         Fortify::authenticateUsing(function ($request) {
             $loginRequest = new LoginRequest();
-            $request->validate($loginRequest->rules(), $loginRequest->messages());
+
+            $validator = Validator::make(
+                $request->all(),
+                $loginRequest->rules(),
+                $loginRequest->messages()
+            );
+
+            if ($validator->fails()) {
+                throw new ValidationException($validator);
+            }
 
             $user = User::where('email', $request->email)->first();
 

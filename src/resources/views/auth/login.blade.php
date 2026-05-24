@@ -14,10 +14,10 @@
 
 
     <div class="auth-form__inner">
-        <form class="form" action="/login" method="post" novalidate>
+        <form class="form" action="{{ route('login.post') }}" method="post" novalidate>
             @csrf
 
-    {{-- アドレス --}}
+            {{-- アドレス --}}
             <div class="auth-form__group">
                 <div class="auth-form__group-title">
                     <span class="auth-form__label--item">メールアドレス</span>
@@ -28,7 +28,7 @@
                     </div>
                     <div class="form__error">
                         @error('email')
-                        {{ $message }}
+                            <p class="error-message">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                     </div>
                     <div class="form__error">
                         @error('password')
-                        {{ $message }}
+                            <p class="error-message">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>

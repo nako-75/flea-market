@@ -7,7 +7,11 @@ use App\Http\Controllers\MypageController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Middleware\CheckProfileSetup;
-
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
+use Illuminate\Http\Request;
+use App\Http\Requests\LoginRequest;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +27,27 @@ use App\Http\Middleware\CheckProfileSetup;
 // 未ログイン
 Route::get('/', [ItemController::class, 'index']);
 Route::get('/item/{item_id}', [ItemController::class, 'show'])->name('item.show');
+Route::post('/login', function (Request $request) {
+    $loginRequest = new LoginRequest();
+    $validator = Validator::make(
+        $request->all(),
+        $loginRequest->rules(),
+        $loginRequest->messages()
+    );
+
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
+    }
+    if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+        $request->session()->regenerate();
+        return redirect()->intended('/');
+    }
+
+    return back()->withErrors([
+        'email' => ['ログイン情報が登録されていません'],
+    ]);
+})->name('login.post');
+
 
 // ログイン
 Route::middleware(['auth', 'verified', CheckProfileSetup::class])->group(function () {

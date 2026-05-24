@@ -30,6 +30,11 @@
                         <input type="file" name="image" class="profile-image__input" id="imageInput" onchange="window.previewImage(this)">
                     </label>
                 </div>
+                <div class="form__error">
+                        @error('image')
+                            <p class="error-message">{{ $message }}</p>
+                        @enderror
+                </div>
             </div>
 
 
@@ -44,7 +49,7 @@
                     </div>
                     <div class="form__error">
                         @error('name')
-                        {{ $message }}
+                            <p class="error-message">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
@@ -61,7 +66,7 @@
                     </div>
                     <div class="form__error">
                         @error('postcode')
-                        {{ $message }}
+                            <p class="error-message">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
@@ -78,7 +83,7 @@
                     </div>
                     <div class="form__error">
                         @error('address')
-                        {{ $message }}
+                            <p class="error-message">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
@@ -95,7 +100,7 @@
                     </div>
                     <div class="form__error">
                         @error('building')
-                        {{ $message }}
+                            <p class="error-message">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>

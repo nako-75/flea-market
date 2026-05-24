@@ -8,6 +8,11 @@
 
 <form action="{{ route('checkout',['item_id' => $item->id]) }}" method="post" class="purchase__form purchase__container">
     @csrf
+
+    <input type="hidden" name="shipping_postcode" value="{{ session('shipping_postcode', Auth::user()->postcode) }}">
+    <input type="hidden" name="shipping_address" value="{{ session('shipping_address', Auth::user()->address) }}">
+    <input type="hidden" name="shipping_building" value="{{ session('shipping_building', Auth::user()->building) }}">
+
     <div class="purchase__main">
         <div class="purchase__contents">
             <div class="item__image">
@@ -21,6 +26,9 @@
 
         <div class="section payment-section">
                 <h2>支払い方法</h2>
+                @error('payment_method')
+                    <p class="error-message">{{ $message }}</p>
+                @enderror
                 <select name="payment_method" onchange="document.getElementById('display-payment').innerText = this.options[this.selectedIndex].text">
                     <option value="" disabled selected>選択してください</option>
                     <option value="konbini">コンビニ支払い</option>
@@ -33,9 +41,9 @@
             <a href="/purchase/address/{{ $item->id }}" class="link-text">変更する</a>
         </div>
         <div class="address-box">
-            <p>〒{{ Auth::user()->postcode }}</p>
-            <p>{{ Auth::user()->address }}</p>
-            <p>{{ Auth::user()->building }}</p>
+            <p>〒{{ $user->postcode }}</p>
+            <p>{{ $user->address }}</p>
+            <p>{{ $user->building }}</p>
         </div>
     </div>
 

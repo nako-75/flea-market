@@ -94,3 +94,10 @@ body {
 .header__nav-button:hover {
     opacity: 0.8;
 }
+
+.error-message {
+    color: #ff0000;
+    font-size: 0.85rem;
+    margin-bottom: 5px;
+    margin-top: 0;
+}

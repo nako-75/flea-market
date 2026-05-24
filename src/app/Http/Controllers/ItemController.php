@@ -9,6 +9,8 @@ use App\Models\Purchase;
 use Illuminate\Support\Facades\Auth;
 use Stripe\Stripe;
 use Stripe\Checkout\Session;
+use App\Http\Requests\ExhibitionRequest;
+use App\Http\Requests\PurchaseRequest;
 
 class ItemController extends Controller
 {
@@ -16,12 +18,11 @@ class ItemController extends Controller
 
         if (Auth::check()) {
             $user = Auth::user();
+            if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail()) {
+                return redirect('/email/verify');
+            }
             if (empty($user->name) || empty($user->profile_image) || empty($user->postcode)) {
-                    $previousUrl = url()->previous();
-                    if (str_contains($previousUrl, 'login')) {
-                    } else {
-                        return redirect('/mypage/profile');
-                }
+                return redirect('/mypage/profile');
             }
         }
 
@@ -56,6 +57,18 @@ class ItemController extends Controller
     }
 
     public function show($item_id){
+        if (Auth::check()) {
+            $user = Auth::user();
+
+            if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail()) {
+                return redirect('/email/verify');
+            }
+
+            if (empty($user->name) || empty($user->profile_image) || empty($user->postcode)) {
+                return redirect('/mypage/profile');
+            }
+        }
+
         $item = Item::with(['categories','comments.user'])
                 ->withCount(['comments', 'likes'])
                 ->findOrFail($item_id);
@@ -68,42 +81,58 @@ class ItemController extends Controller
 
     public function purchase($item_id){
         $item = Item::findOrFail($item_id);
-        return view('purchase', compact('item'));
+        $user = Auth::user();
+        $displayAddress = [
+            'postcode' => session('shipping_postcode', $user->postcode),
+            'address'  => session('shipping_address', $user->address),
+            'building' => session('shipping_building', $user->building),
+        ];
+        return view('purchase', [
+            'item' => $item,
+            'user' => (object)$displayAddress
+        ]);
     }
 
-    public function store(Request $request) {
-        $imagePath = null;
-        if ($request->hasFile('item_image')) {
-            $imagePath = $request->file('item_image')->store('item_images', 'public');
-        }
-
+    public function store(ExhibitionRequest $request) {
+        $validated = $request->validated();
         $item = new Item();
         if(auth()->check()){
             $item->user_id = auth()->id();
         }
 
-        $item->name = $request->name;
-        $item->price = $request->price;
-        $item->description = $request->description;
-        $item->img_url = $imagePath;
-        $item->condition = $request->condition;
+        $item->name = $validated['name'];
+        $item->price = $validated['price'];
+        $item->description = $validated['description'];
+        $item->condition = $validated['condition'];
         $item->brand_name = $request->brand_name;
+        $item->img_url = null;
         $item->save();
 
+        if ($request->hasFile('item_image')) {
+            $file = $request->file('item_image');
+            $extension = $file->getClientOriginalExtension();
+            $fileName = 'item_' . $item->id . '.' . $extension;
+            $file->storeAs('item_images', $fileName, 'public');
+            $item->img_url = 'item_images/' . $fileName;
+            $item->save();
+        }
+
         if ($request->has('category_ids')) {
-            $item->categories()->attach($request->category_ids);
+            $item->categories()->attach($validated['category_ids']);
         }
 
         return redirect('/')->with('message','商品を出品しました！');
     }
 
-    public function checkout(Request $request, $item_id){
+    public function checkout(PurchaseRequest $request, $item_id){
+        $validated = $request->validated();
+
         $item = Item::findOrFail($item_id);
         $user = Auth::user();
 
         Stripe::setApiKey(config('services.stripe.secret'));
         $session = Session::create([
-            'payment_method_types' => [$request->payment_method],
+            'payment_method_types' => [$validated['payment_method']],
             'line_items' => [[
                 'price_data' => [
                     'currency' => 'jpy',
@@ -121,9 +150,11 @@ class ItemController extends Controller
             'metadata' => [
                 'user_id' => $user->id,
                 'item_id' => $item_id,
-                'postcode' => $user->postcode,
-                'address' => $user->address,
-                'building' => $user->building,
+                'price' => $item->price,
+                'payment_method' => $validated['payment_method'],
+                'shipping_postcode' => $validated['shipping_postcode'],
+                'shipping_address' => $validated['shipping_address'],
+                'shipping_building' => $validated['shipping_building'] ?? '',
             ],
         ]);
 
@@ -131,11 +162,30 @@ class ItemController extends Controller
     }
 
     public function success(Request $request, $item_id) {
-        Purchase::create([
-            'user_id' => Auth::id(),
-            'item_id' => $item_id,
-        ]);
+            Stripe::setApiKey(config('services.stripe.secret'));
+            try {
+                $stripeSession = Session::retrieve($request->get('session_id'));
+                $metadata = $stripeSession->metadata;
 
-        return redirect('/')->with('message','商品を購入しました！');
+            Purchase::create([
+                'user_id' => $metadata['user_id'],
+                'item_id' => $metadata['item_id'],
+                'price' => $metadata['price'],
+                'payment_method' => $metadata['payment_method'],
+                'shipping_postcode' => $metadata['shipping_postcode'],
+                'shipping_address'  => $metadata['shipping_address'],
+                'shipping_building' => $metadata['shipping_building'] ?? null,
+            ]);
+
+            session()->forget([
+                'shipping_postcode',
+                'shipping_address',
+                'shipping_building'
+            ]);
+
+            return redirect('/')->with('message','商品を購入しました！');
+        } catch (\Exception $e) {
+            return redirect('/')->with('error', '決済処理中にエラーが発生しました。');
+        }
     }
 }

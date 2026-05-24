@@ -14,6 +14,7 @@ class ItemsTableSeeder extends Seeder
      */
     public function run()
     {
+        $userIds = \App\Models\User::pluck('id')->toArray();
         $items = [
         [
             'user_id'     => 1,
@@ -21,7 +22,7 @@ class ItemsTableSeeder extends Seeder
             'price'       => 15000,
             'description' => 'スタイリッシュなデザインのメンズ腕時計',
             'condition'   => '1',
-            'img_url'     => 'products/image1.jpg',
+            'img_url'     => 'item_images/image1.jpg',
             'brand_name'  => 'Rolax'
         ],
         [
@@ -30,7 +31,7 @@ class ItemsTableSeeder extends Seeder
             'price'       => 5000,
             'description' => '高速で信頼性の高いハードディスク',
             'condition'   => '2',
-            'img_url'     => 'products/image2.jpg',
+            'img_url'     => 'item_images/image2.jpg',
             'brand_name'  => '西芝'
         ],
         [
@@ -39,7 +40,7 @@ class ItemsTableSeeder extends Seeder
             'price'       => 300,
             'description' => '新鮮な玉ねぎ3束のセット',
             'condition'   => '3',
-            'img_url'     => 'products/image3.jpg',
+            'img_url'     => 'item_images/image3.jpg',
             'brand_name'  => 'なし'
         ],
         [
@@ -48,7 +49,7 @@ class ItemsTableSeeder extends Seeder
             'price'       => 4000,
             'description' => 'クラシックなデザインの革靴',
             'condition'   => '4',
-            'img_url'     => 'products/image4.jpg',
+            'img_url'     => 'item_images/image4.jpg',
             'brand_name'  => ''
         ],
         [
@@ -57,7 +58,7 @@ class ItemsTableSeeder extends Seeder
             'price'       => 45000,
             'description' => '高性能なノートパソコン',
             'condition'   => '1',
-            'img_url'     => 'products/image5.jpg',
+            'img_url'     => 'item_images/image5.jpg',
             'brand_name'  => ''
         ],
         [
@@ -66,7 +67,7 @@ class ItemsTableSeeder extends Seeder
             'price'       => 8000,
             'description' => '高音質のレコーディング用マイク',
             'condition'   => '2',
-            'img_url'     => 'products/image6.jpg',
+            'img_url'     => 'item_images/image6.jpg',
             'brand_name'  => 'なし'
         ],
         [
@@ -75,7 +76,7 @@ class ItemsTableSeeder extends Seeder
             'price'       => 3500,
             'description' => 'おしゃれなショルダーバッグ',
             'condition'   => '3',
-            'img_url'     => 'products/image7.jpg',
+            'img_url'     => 'item_images/image7.jpg',
             'brand_name'  => ''
         ],
         [
@@ -84,7 +85,7 @@ class ItemsTableSeeder extends Seeder
             'price'       => 500,
             'description' => '使いやすいタンブラー',
             'condition'   => '4',
-            'img_url'     => 'products/image8.jpg',
+            'img_url'     => 'item_images/image8.jpg',
             'brand_name'  => 'なし'
         ],
         [
@@ -93,7 +94,7 @@ class ItemsTableSeeder extends Seeder
             'price'       => 4000,
             'description' => '手動のコーヒーミル',
             'condition'   => '1',
-            'img_url'     => 'products/image9.jpg',
+            'img_url'     => 'item_images/image9.jpg',
             'brand_name'  => 'Starbacks'
         ],
         [
@@ -102,12 +103,13 @@ class ItemsTableSeeder extends Seeder
             'price'       => 2500,
             'description' => '便利なメイクアップセット',
             'condition'   => '2',
-            'img_url'     => 'products/image10.jpg',
+            'img_url'     => 'item_images/image10.jpg',
             'brand_name'  => ''
         ],
         ];
 
         foreach ($items as $item){
+            $item['user_id'] = $userIds[array_rand($userIds)];
             Item::create($item);
         }
     }

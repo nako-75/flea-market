@@ -23,11 +23,11 @@
                 </div>
                 <div class="auth-form__group-content">
                     <div class="auth-form__input--text">
-                        <input type="text" name="postcode" value="{{ old('postcode', Auth::user()->postcode) }}">
+                        <input type="text" name="shipping_postcode" value="{{ old('shipping_postcode', Auth::user()->shipping_postcode) }}">
                     </div>
                     <div class="form__error">
-                        @error('postcode')
-                        {{ $message }}
+                        @error('shipping_postcode')
+                            <p class="error-message">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
@@ -40,11 +40,11 @@
                 </div>
                 <div class="auth-form__group-content">
                     <div class="auth-form__input--text">
-                        <input type="text" name="address" value="{{ old('address', Auth::user()->address) }}">
+                        <input type="text" name="shipping_address" value="{{ old('shipping_address', Auth::user()->shipping_address) }}">
                     </div>
                     <div class="form__error">
-                        @error('address')
-                        {{ $message }}
+                        @error('shipping_address')
+                            <p class="error-message">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>
@@ -57,11 +57,11 @@
                 </div>
                 <div class="auth-form__group-content">
                     <div class="auth-form__input--text">
-                        <input type="text" name="building" value="{{ old('building', Auth::user()->building) }}">
+                        <input type="text" name="shipping_building" value="{{ old('shipping_building', Auth::user()->shipping_building) }}">
                     </div>
                     <div class="form__error">
-                        @error('building')
-                        {{ $message }}
+                        @error('shipping_building')
+                            <p class="error-message">{{ $message }}</p>
                         @enderror
                     </div>
                 </div>

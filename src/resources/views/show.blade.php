@@ -98,6 +98,10 @@
 
                 <div class="comment-form-area">
                     <h3 class="form-label">商品へのコメント</h3>
+                    @error('comment')
+                        <p class="error-message">{{ $message }}</p>
+                    @enderror
+
                     <form action="/item/{{ $item->id }}/comment" method="post">
                         @csrf
                         <textarea name="comment" class="comment-textarea"></textarea>

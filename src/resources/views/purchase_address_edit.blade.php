@@ -23,7 +23,7 @@
                 </div>
                 <div class="auth-form__group-content">
                     <div class="auth-form__input--text">
-                        <input type="text" name="shipping_postcode" value="{{ old('shipping_postcode', Auth::user()->shipping_postcode) }}">
+                        <input type="text" name="shipping_postcode" value="{{ old('shipping_postcode', Auth::user()->postcode) }}">
                     </div>
                     <div class="form__error">
                         @error('shipping_postcode')
@@ -40,7 +40,7 @@
                 </div>
                 <div class="auth-form__group-content">
                     <div class="auth-form__input--text">
-                        <input type="text" name="shipping_address" value="{{ old('shipping_address', Auth::user()->shipping_address) }}">
+                        <input type="text" name="shipping_address" value="{{ old('shipping_address', Auth::user()->address) }}">
                     </div>
                     <div class="form__error">
                         @error('shipping_address')
@@ -57,7 +57,7 @@
                 </div>
                 <div class="auth-form__group-content">
                     <div class="auth-form__input--text">
-                        <input type="text" name="shipping_building" value="{{ old('shipping_building', Auth::user()->shipping_building) }}">
+                        <input type="text" name="shipping_building" value="{{ old('shipping_building', Auth::user()->building) }}">
                     </div>
                     <div class="form__error">
                         @error('shipping_building')

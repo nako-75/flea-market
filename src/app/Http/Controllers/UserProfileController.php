@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Item;
 use App\Http\Requests\ProfileRequest;
-use App\Http\Requests\PurchaseRequest;
+use App\Http\Requests\AddressRequest;
 
 class UserProfileController extends Controller
 {
@@ -46,7 +46,7 @@ class UserProfileController extends Controller
     ]);
     }
 
-    public function updatePurchaseAddress(PurchaseRequest $request, $item_id){
+    public function updatePurchaseAddress(AddressRequest $request, $item_id){
         $validated = $request->validated();
 
         session([

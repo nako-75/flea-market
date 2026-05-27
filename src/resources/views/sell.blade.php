@@ -22,6 +22,11 @@
                     <input type="file" name="item_image" class="image-upload__input">
                 </label>
             </div>
+            @error('item_image')
+                <div class="error-message">
+                    {{ $message }}
+                </div>
+            @enderror
         </div>
 
         <div class="sell-section">
@@ -37,6 +42,11 @@
                         </label>
                     @endforeach
                 </div>
+                @error('category_ids')
+                    <div class="error-message">
+                        {{ $message }}
+                    </div>
+                @enderror
             </div>
 
             <div class="form-group">
@@ -48,6 +58,11 @@
                     <option value="3">やや傷や汚れあり</option>
                     <option value="4">状態が悪い</option>
                 </select>
+                @error('condition')
+                    <div class="error-message">
+                        {{ $message }}
+                    </div>
+                @enderror
             </div>
         </div>
 
@@ -56,6 +71,11 @@
             <div class="form-group">
                 <label class="form-label">商品名</label>
                 <input type="text" name="name" class="form-input">
+                @error('name')
+                    <div class="error-message">
+                        {{ $message }}
+                    </div>
+                @enderror
             </div>
             <div class="form-group">
                 <label class="form-label">ブランド名</label>
@@ -64,6 +84,11 @@
             <div class="form-group">
                 <label class="form-label">商品の説明</label>
                 <textarea name="description" rows="5" class="form-textarea"></textarea>
+                @error('description')
+                    <div class="error-message">
+                        {{ $message }}
+                    </div>
+                @enderror
             </div>
             <div class="form-group">
                 <label class="form-label">販売価格</label>
@@ -71,6 +96,11 @@
                     <span class="price-unit">¥</span>
                     <input type="text" name="price" class="form-input">
                 </div>
+                @error('price')
+                    <div class="error-message">
+                        {{ $message }}
+                    </div>
+                @enderror
             </div>
         </div>
 
@@ -79,4 +109,5 @@
         </div>
     </form>
 </div>
+
 @endsection

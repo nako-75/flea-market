@@ -13,6 +13,6 @@ class Category extends Model
     protected $fillable = ['name'];
 
     public function items(){
-        return $this->belongToMany(Item::class);
+        return $this->belongsToMany(Item::class);
     }
 }

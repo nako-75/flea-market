@@ -2,7 +2,8 @@
 ＃　新模擬案件_フリマアプリ
 
 ＃＃　Dockerビルド<br>
-ー&nbsp;git clone<br>
+ー&nbsp;git clone　git@github.com:nako-75/flea-market.git<br>
+ー&nbsp;cd　flea-market<br>
 ー&nbsp;docker-compose up -d —build<br>
 
 ＃＃　環境構築<br>
